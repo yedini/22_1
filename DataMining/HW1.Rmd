@@ -1,0 +1,71 @@
+---
+title: "DataMiningHW1"
+author: "user"
+date: '2022 3 22 '
+output: html_document
+---
+              
+              
+```{r}
+setwd('C:/Users/YJ-HWANG/Desktop/22-1/DataMining')
+library(tidyverse)
+library(scatterplot3d)
+```
+
+         
+         
+## Problem 2         
+Make a function that generates N pts uniformly distributed within p-dimensional unit sphere
+```{r}
+data_in_sphere <- function(n, p) {
+  start_time <- Sys.time()
+  answer <- matrix(rep(0, n*p), nrow=n)
+  
+  for (i in 1:n) {
+    di <- (runif(1, 0, 1))^(1/p)         # generate radius
+    iftrue <- 0
+    while (iftrue == 0){
+      v <- runif(p-1, -1, 1)   # generate v(1), ..., v(p-1)
+      s <- sum(v^2)              # sum of v^2
+      iftrue <- ifelse(di>s, 1, 0)
+    }
+
+    answer[i, 1:p-1] <- 2*v*(di-s)^(1/2)
+    answer[i, p] <- di-2*s
+    #cat(v, s, di, '\n')
+  }
+  end_time <- Sys.time()
+  cat("time", end_time - start_time, '\n')
+  return(answer)
+}
+```
+          
+          
+#### Simulation of function        
+##### case 1) n=1000, p=2 (2-dimensional)
+```{r}
+df1 <- data.frame(data_in_sphere(1000, 2))
+df1 %>% ggplot(aes(X1, X2))+
+  geom_hline(yintercept = 0)+geom_vline(xintercept = 0)+
+  geom_point(colour="lightcoral")+
+  ggtitle("Visualization of case1(2-dim)")+
+  coord_fixed(ratio=1)+
+  theme_light()+theme(plot.title = element_text(hjust=0.5))
+```
+          
+          
+##### case2) n=5000, p=3 (3-dimensional)
+```{r}
+df2 <- data.frame(data_in_sphere(5000, 3))
+scatterplot3d(df2,
+              color="lightcoral",
+              main="Visualization of case2(3-dim)",asp = 1)
+```
+
+
+
+
+
+
+
+
