@@ -15,9 +15,10 @@ library(scatterplot3d)
          
          
 ## Problem 2         
-Make a function that generates N pts uniformly distributed within p-dimensional unit sphere
+Make a function that generates N points uniformly distributed within p-dimensional unit sphere
 ```{r}
-data_in_sphere <- function(n, p) {
+# data generating function
+data_in_sphere <- function(n, p, time=TRUE) {
   start_time <- Sys.time()
   answer <- matrix(rep(0, n*p), nrow=n)
   
@@ -35,7 +36,9 @@ data_in_sphere <- function(n, p) {
     #cat(v, s, di, '\n')
   }
   end_time <- Sys.time()
-  cat("time", end_time - start_time, '\n')
+  if (time == TRUE) {
+    cat("time", end_time - start_time, '\n')
+  }
   return(answer)
 }
 ```
@@ -52,16 +55,176 @@ df1 %>% ggplot(aes(X1, X2))+
   coord_fixed(ratio=1)+
   theme_light()+theme(plot.title = element_text(hjust=0.5))
 ```
-          
-          
-##### case2) n=5000, p=3 (3-dimensional)
 ```{r}
-df2 <- data.frame(data_in_sphere(5000, 3))
+head(df1)
+```
+
+          
+          
+##### case2) n=1000, p=3 (3-dimensional)
+```{r}
+df2 <- data.frame(data_in_sphere(1000, 3))
 scatterplot3d(df2,
               color="lightcoral",
               main="Visualization of case2(3-dim)",asp = 1)
 ```
+```{r}
+head(df2)
+```
 
+##### case3) n=1000, p=10 (10-dimensional)
+```{r}
+df3 <- data.frame(data_in_sphere(1000, 10))  #1초
+head(df3)
+```
+##### case4) n=1000, p=15 (15-dimensional)
+```{r}
+df4 <- data.frame(data_in_sphere(1000, 15))
+head(df4)
+```
+##### case5) n=5000, p=10 (15-dimensional)
+```{r}
+df5 <- data.frame(data_in_sphere(5000, 10))  #초
+head(df5)
+```
+##### case6) n=10000, p=10 (15-dimensional)
+```{r}
+df6 <- data.frame(data_in_sphere(10000, 10))  #초
+head(df6)
+```
+             
+             
+## Problem 3        
+```{r}
+# 위의 data generating 함수를 이용하여 데이터를 생성하고 이를 바탕으로 최소값의 median을 구하는 함수
+simulation <- function(n, p, iteration=1000) {
+  start_time <- Sys.time()
+  minvalues <- c()
+  for (i in 1:iteration) {
+    df <- data_in_sphere(n, p, time=FALSE)
+    minvalues[i] <- min(apply(df, 1, function(x) sqrt(sum(x^2))))
+  }
+  end_time <- Sys.time()
+  cat("time", end_time - start_time, '\n')
+  return(median(minvalues))
+  
+}
+```
+```{r}
+# 수식을 이용하여 median을 구하는 함수
+theo <- function(n, p) {
+  return((1-(1/2)^(1/n))^(1/p))
+}
+```
+
+
+```{r}
+simulation(10, 2)
+```
+```{r}
+theo(10, 2)
+```
+
+
+
+```{r}
+simulation(10, 5)
+```
+```{r}
+theo(10, 5)
+```
+
+
+
+
+```{r}
+simulation(10, 10)
+```
+```{r}
+theo(10, 10)
+```
+
+
+
+```{r}
+simulation(100, 2)
+```
+```{r}
+theo(100, 2)
+```
+
+
+
+```{r}
+simulation(100, 5)
+```
+```{r}
+theo(100, 5)
+```
+
+
+```{r}
+simulation(100, 10)  # 분 단위
+```
+```{r}
+theo(100, 10)
+```
+
+
+
+```{r}
+simulation(1000, 2)
+```
+```{r}
+theo(1000, 2)
+```
+
+
+
+```{r}
+simulation(1000, 5)
+```
+```{r}
+theo(1000, 5)
+```
+
+
+
+```{r}
+simulation(1000, 10)
+```
+```{r}
+theo(1000, 10)
+```
+
+
+
+
+```{r}
+simulation(10000, 2)  # 분
+```
+```{r}
+theo(10000, 2)
+```
+
+
+```{r}
+simulation(10000, 5)
+```
+```{r}
+theo(10000, 5)
+```
+
+
+
+
+```{r}
+simulation(10000, 10)
+```
+
+```{r}
+theo(10000, 10)
+```
 
 
 
