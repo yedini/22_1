@@ -1,0 +1,424 @@
+---
+title: "HW2"
+author: "user"
+date: '2022 3 26 '
+output:
+  word_document: default
+  html_document: default
+---
+         
+         
+```{r}
+setwd('C:/Users/YJ-HWANG/Desktop/22-1/DataMining')
+```
+
+       
+## 1. Chapter 2 R Lab
+#### Basic commands
+```{r}
+# create vector
+x <- c(1, 3, 2, 5)
+x
+```
+```{r}
+# <- 대신 = 도 사용가능
+x = c(1, 6, 2)
+y = c(1, 4, 3)
+x
+```
+```{r}
+# x와 y의 길이가 같을 경우 두 벡터를 더할 수 있음
+length(x)
+length(y)
+x+y
+```
+```{r}
+# ls(): 모든 object의 리스트 출력 / rm(): 원하는 리스트 삭제 가능
+ls()
+rm(x, y)
+ls()
+```
+```{r}
+# 모든 리스트를 한번에 없애기
+rm(list=ls())
+```
+
+```{r}
+# matrix 만들기
+x = matrix(data = c(1, 2, 3, 4), nrow=2, ncol=2)
+x
+```
+```{r}
+# matrix 안의 값을 행부터 채워넣을 때: byrow=TRUE
+matrix(data = c(1, 2, 3, 4), 2, 2, byrow=TRUE)
+```
+```{r}
+# 매트릭스의 모든 원소에 계산식을 한번에 적용
+sqrt(x)
+x^2
+```
+```{r}
+# normal 분포를 따르는 random한 숫자 50개 반들기
+x <- rnorm(50)
+y <- x + rnorm(50, mean=50, sd=.1)
+cor(x,y)  # x와 y의 상관관계
+```
+```{r}
+# seed 정하기: 같은 seed면 randomness가 들어간 함수를 실행했을 때 같은 결과를 출력
+set.seed(1303)
+rnorm(50)
+```
+```{r}
+# 통계량 계산
+set.seed(3)
+y = rnorm(100)
+mean(y)
+var(y)
+sqrt(var(y))
+sd(y)
+```
+              
+              
+#### Graphics
+```{r}
+# plot 그리기
+x = rnorm(100)
+y = rnorm(100)
+plot(x, y)  # 기본 scatter plot
+plot(x, y, xlab = "X-axis", ylab="Y-axis", main="Plot of X vs Y")  # Title, x축 이름, y축 이름 설명
+```
+```{r}
+# plot을 pdf로 저장하기
+pdf("Figure.pdf")
+plot(x, y, col='green')
+dev.off()  # plot 그리기를 끝냈음을 알려주는 함수
+```
+```{r}
+# 연속적인 숫자 생성
+x <- seq(1, 10)
+x
+```
+```{r}
+# contour() 함수를 이용해서 3-dimensional plot을 2차원 그래프에 표현
+x <- seq(-pi, pi, length=50)
+y = x
+f = outer(x, y, function(x, y) cos(y)/(1+x^2))
+contour(x, y, f)
+contour(x, y, f, nlevels=45, add=T)
+```
+```{r}
+fa = (f-t(f))/2
+contour(x, y, fa, nlevels=15)
+```
+```{r}
+# image(): z value에 따라 color가 print되는 함수 => heatmap!
+image(x,y,fa)
+# persp: 3차원 plot
+persp(x,y,fa)
+persp(x,y,fa,theta=30)
+persp(x,y,fa,theta=30,phi=20)
+persp(x,y,fa,theta=30,phi=70)
+persp(x,y,fa,theta=30,phi=40)
+```
+          
+          
+#### Indexing data
+```{r}
+A=matrix(1:16,4,4)
+A
+```
+```{r}
+# 인덱싱 하려는 행, 열의 번호 입력
+A[2, 3]
+```
+```{r}
+# multiple indexing
+A[c(1, 3), c(2, 4)]
+A[1:3, 2:4]
+A[1:2, ]
+A[, 1:2]
+```
+```{r}
+# 특정 행만 빼고: - 이용
+A[-c(1, 3),]
+```
+```{r}
+# matrix 차원 확인
+dim(A)
+```
+          
+          
+#### Loading data
+```{r}
+auto <- read.table("Auto.data")
+fix(auto)  # spread sheet를 띄워주는 함수
+```
+```{r}
+# na값 인식
+auto <- read.table("Auto.data", header=T, na.strings="?")
+dim(auto)
+auto[1:4, ]
+```
+```{r}
+# na가 있는 항은 사용 x
+auto <- na.omit(auto)
+dim(auto)
+```
+```{r}
+# 변수 이름 확인
+names(auto)
+```
+          
+          
+#### additional graphical and numerical summeries
+```{r}
+# attach 사용: $ 안붙이고도 dataframe의 변수 사용 가능
+attach(auto)
+plot(cylinders, mpg)
+```
+```{r}
+# numerical 형식으로 시각화된 cylindes: factor 형태로 바꾸기
+cylinders <- as.factor(cylinders)
+```
+```{r}
+plot(cylinders, mpg)
+plot(cylinders, mpg, col="red")
+plot(cylinders, mpg, col="red", varwidth=T)   # varwidth: box의 크기가 # of observations의 제곱은에 비례
+plot(cylinders, mpg, col="red", varwidth=T,horizontal=T)
+plot(cylinders, mpg, col="red", varwidth=T, xlab="cylinders", ylab ="MPG")
+```
+```{r}
+# histogram
+hist(mpg)
+hist(mpg,col=2)   # col=2: 빨간색
+hist(mpg,col=2,breaks=15)  # 15개의 bin으로 끊음
+```
+```{r}
+# scatter plot matrix
+pairs(~mpg + displacement + horsepower + weight + acceleration , auto)
+```
+```{r}
+summary(auto)
+```
+```{r}
+summary(mpg)
+```
+             
+             
+             
+## 2. Chapter 2 excercise 8
+#### a.
+```{r}
+college <- read.csv('College.csv')
+head(college)
+```
+             
+#### b.
+```{r}
+rownames(college) <- college[,1]
+college <- college[, -1]
+fix(college)
+head(college)
+```
+           
+           
+#### c.
+##### i. numerical summary
+```{r}
+summary(college)
+```
+##### ii. scatterplot matrix of first ten numerical columns
+```{r}
+pairs(college[, 2:11])
+```
+##### iii. side-by-side boxplots of Outstate vs Private
+```{r}
+plot(as.factor(college$Private), college$Outstate, col = "lightcoral", varwidth=TRUE, horizontal=TRUE,
+     xlab="outstate", ylab="private", main="plot of Outstate by Private")
+```
+        
+-> Private indicator의 경우 대체로 Public indicator보다 out-of-state tuition이 많이 들었다.           
+            
+##### iv. create Elite by binning the Top10perc variable
+```{r}
+Elite=rep("No",nrow(college))
+Elite[college$Top10perc >50]="Yes"
+Elite=as.factor(Elite)
+college=data.frame(college ,Elite)
+head(college)
+```
+```{r}
+summary(college)
+```
+```{r}
+plot(as.factor(college$Elite), college$Outstate, col = "lightcoral", varwidth=TRUE, horizontal=TRUE,
+     xlab="outstate", ylab="Elite", main="plot of Outstate by Elite")
+```
+          
+-> Elite 그룹의 외부 교육 비용이 평균적으로 더 높다.      
+            
+##### v. Histograms with differing # of bins for quantitative variables
+```{r}
+par(mfrow=c(2,2))
+hist(college$Top10perc,col="lightcoral", main = "Histogram of Top10perc", breaks=10)
+hist(college$Top10perc,col="lightcoral", main = "Histogram of Top10perc", breaks=20)
+hist(college$Top10perc,col="lightcoral", main = "Histogram of Top10perc", breaks=40)
+hist(college$Top10perc,col="lightcoral", main = "Histogram of Top10perc", breaks=4 )
+```
+         
+-> 고등학교 상위 10%에 속하는 학생들이 속해있는 비율은 왼쪽으로 치우쳐진 분포를 가지며, 주로 0~40% 정도에 속한다.        
+               
+##### vi. Exploring the data
+```{r}
+# Top10perc vs PhD scatter plot
+par(mfrow=c(1,1))
+plot(college$Top10perc, college$PhD, xlab="Top10perc", ylab='PhD', main="Scatterplot of Top10perc vs PhD")
+```
+        
+-> 고등학교 상위 10%에 속했던 학생들이 많을수록 박사 비율이 높다.
+```{r}
+# Boxplot of Personal by Private
+plot(as.factor(college$Private), college$Personal, col = "lightcoral", varwidth=TRUE, horizontal=TRUE,
+     xlab="Personal", ylab="Private", main="plot of Personal by Private")
+```
+        
+-> Public indicator에 해당하는 학생들의 personal spending이 평균적으로 private indicator보다 더 높다.        
+            
+            
+## 3. Chapter 2 excercise 9
+```{r}
+auto <- read.table("Auto.data", header=T, na.strings="?")
+auto <- na.omit(auto)
+head(auto)
+```
+
+#### (a)
+```{r}
+str(auto)
+```
+            
+-> quantitative: mpg, cylinders, displacement, horsepower, weight, acceleration, year, origin        
+   qualitative: name        
+         
+         
+#### (b)
+```{r}
+apply(auto[, 1:8], 2, range)
+```
+           
+           
+#### (c)
+```{r}
+apply(auto[, 1:8], 2, mean)
+apply(auto[, 1:8], 2, sd)
+```
+        
+        
+#### (d)
+```{r}
+auto1 <- rbind(auto[1:9,], auto[86:392,])
+head(auto1)
+```
+```{r}
+summary(auto1)
+```
+         
+         
+#### (e)
+```{r}
+pairs(auto[, 1:8])
+```
+```{r}
+# 전체 pair scatter plot 중 명확한 상관관계를 보이는 plot들을 다시 출력
+par(mfrow=c(2, 3))
+plot(auto$mpg, auto$displacement, col="lightcoral", main="mpg vs displacement")
+plot(auto$mpg, auto$weight, col="lightcoral", main = "mpg vs weight")
+plot(auto$displacement, auto$horsepower, col="lightcoral", main = "displacement vs horsepower")
+plot(auto$displacement, auto$weight, col="lightcoral", main = "displacement vs weight")
+plot(auto$horsepower, auto$weight, col="lightcoral", main = "horsepower vs weight")
+plot(auto$horsepower, auto$acceleration, col="lightcoral", main = "horsepower vs acceleration")
+```
+         
+displacement와 horsepower, displacement와 weight, horsepower와 weight는 강한 양의 상관관계를 보였고       
+mpg와 displacement, mpg와 weight, horsepower와 acceleration은 강한 음의 상관관계를 보였다.       
+            
+            
+#### (f)
+(e)에서 그린 전체 변수간 correlation plot을 보면,         
+displacement, housepwer, weight 변수의 경우 mpg와의 음의 상관관계가 뚜렷하게 보이므로 mpg를 예측할 때 도움이 될 것으로 보인다.     
+              
+              
+## 4. Chapter 2 excercise 10
+#### (a)
+```{r}
+library(MASS)
+head(Boston)
+?Boston
+```
+506개의 행과 14개의 열로 되어있다. 506개 town에 속한 주택에 대한 14개의 정보가 들어있음을 뜻한다.         
+               
+               
+#### (b)
+```{r}
+pairs(Boston)
+```
+          
+-> medv와 lstat, lstat과 rm, nox와 dis의 경우 뚜렷한 음의 상관관계를 보인다.
+rm과 medv의 경우에는 뚜렷한 양의 상관관계를 보인다.        
+         
+         
+#### (c)
+chas 변수와의 scatter plot을 보면, chales 강 근처에 있는 town의 경우 그렇지 않은 경우보다 범죄율이 확연히 낮다.          
+               
+               
+#### (d)
+```{r}
+par(mfrow=c(1, 2))
+plot(Boston$tax, Boston$crim, col = "lightcoral", main="tax vs crim")
+plot(Boston$ptratio, Boston$crim, col = "lightcoral", main="ptratio vs crim")
+```
+           
+tax와 crim의 scatter plot을 보면 tax가 650~700사이일 때 범죄율이 특히 높은 경우가 많았고,        
+ptratio의 경우 ptratio=20 부근에서 범죄율이 특히 높은 경우가 많았다.        
+            
+            
+#### (e)
+```{r}
+table(Boston$chas)
+```
+전체 데이터 중 35개의 town이 charles 강 부근에 있다.          
+            
+            
+#### (f)
+```{r}
+median(Boston$ptratio)
+```
+          
+          
+#### (g)
+```{r}
+library(tidyverse)
+Boston %>% filter(Boston$medv == min(Boston$medv))
+```
+가장 낮은 중간값을 가진 town은 2개로, 각 town의 중간값은 $5000 이다.
+```{r}
+summary(Boston)
+```
+중간값의 최소값을 가지는 town의 다른 변수들을 전체 범위와 비교해보면,           
+두 town 모두 범죄율이 평균에 비해 매우 높으며, 1940 이전에 지어진 집의 비율이 100%로 최대값에 속한다.      
+방사형 도로까지의 접근지수 또한 둘다 최대값을 가지며 모집단 내 하위계층의 비율이 높은 편이다.
+             
+             
+#### (h)
+```{r}
+Boston %>% filter(Boston$rm >= 7)
+```
+=> 평균 방 개수가 7개 이상인 suburb는 총 64개이다.
+```{r}
+Boston %>% filter(Boston$rm >= 8)
+```
+ => 평균 방 개수가 8개 이상인 suburb는 14개로, 7개 이상인 경우보다 훨씬 소수에 속한다.
+
+
+
+
